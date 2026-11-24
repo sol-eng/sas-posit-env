@@ -59,7 +59,7 @@ memory=8GB
 Run `wsl --shutdown` in PowerShell to apply the change, then open the distribution again.
 
 > [!IMPORTANT]
-> Keep the repository in the WSL file system, for example `~/sas-mcp-env`, not under `/mnt/c`. Docker mounts files from the Windows drive slowly and without Linux file permissions.
+> Keep the repository in the WSL file system, for example `~/sas-posit-env`, not under `/mnt/c`. Docker mounts files from the Windows drive slowly and without Linux file permissions.
 
 ## Set up the environment
 
@@ -68,8 +68,8 @@ Run `wsl --shutdown` in PowerShell to apply the change, then open the distributi
 Clone the repository. On Windows, run this inside WSL:
 
 ```bash
-git clone <repository-url> ~/sas-mcp-env
-cd ~/sas-mcp-env
+git clone https://github.com/sol-eng/sas-posit-env.git ~/sas-posit-env
+cd ~/sas-posit-env
 ```
 
 The `.gitattributes` file keeps Linux line endings in every checkout, including Git for Windows checkouts. The containers fail to start if a script has Windows line endings. See [Troubleshooting](#troubleshooting).
@@ -227,4 +227,4 @@ docker compose down -v
 | `config/ppm` | Package Manager configuration |
 | `config/shared` | Script that installs the certificates from `certs` |
 | `certs` | Optional certificate authority certificates |
-| `licenses` | Your license files, not included |
+| `licenses` | Your license files, not included in the repository |
