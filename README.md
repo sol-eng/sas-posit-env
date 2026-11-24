@@ -16,6 +16,8 @@ The environment configures the following:
 - Workbench sessions and Connect install R and Python packages from the local Package Manager.
 - Workbench sessions publish to the local Connect server by default.
 
+The [SAS Viya with OAuth tokens](https://posit-dev.github.io/positron-sas-extension/Workbench/Code/viyaOauth/) guide explains how the Workbench and Connect OAuth integrations work with SAS Viya.
+
 The same files work on macOS, Linux, and Windows with Windows Subsystem for Linux (WSL).
 
 ## Requirements
@@ -126,7 +128,7 @@ Ask your SAS Viya administrator to register a SAS Logon client for each product 
 | Workbench | `http://localhost:8787/oauth_redirect_callback` |
 | Connect | `http://localhost:3939/__oauth__/integrations/callback` |
 
-The [SAS Viya with OAuth tokens](https://posit-dev.github.io/positron-sas-extension/Workbench/Code/viyaOauth) guide describes the client registration.
+The [SAS Viya with OAuth tokens](https://posit-dev.github.io/positron-sas-extension/Workbench/Code/viyaOauth/) guide describes the client registration.
 
 ### Start the services
 
@@ -219,6 +221,11 @@ On macOS, use `sed -i ''` in place of `sed -i`.
 ```bash
 docker compose down -v
 ```
+
+## More information
+
+- [SAS Viya with OAuth tokens](https://posit-dev.github.io/positron-sas-extension/Workbench/Code/viyaOauth/): How Workbench and Connect use OAuth tokens for SAS Viya, including the SAS Logon client setup
+- [Positron SAS extension documentation](https://posit-dev.github.io/positron-sas-extension/): Installation, connection profiles, and the other supported SAS setups
 
 ## Repository layout
 
