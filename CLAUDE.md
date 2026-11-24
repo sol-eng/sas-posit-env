@@ -17,7 +17,7 @@ docker compose run --rm connect-init          # re-run Connect provisioning (ide
 docker compose exec connect cat /var/lib/connect-bootstrap/admin-password   # Connect admin login (user: admin)
 ```
 
-Logins: Workbench `posit`/`posit` (PWB_TESTUSER), Connect `admin` + generated password above. Health endpoints: `:3939/__ping__`, `:4242/__ping__`, `:8787/health-check`.
+Logins: `posit`/`positsas2026` on Workbench (PWB_TESTUSER) and Connect (publisher, created by `connect-init`; override with `POSIT_USER_PASSWORD`), Connect `admin` + generated password above. Health endpoints: `:3939/__ping__`, `:4242/__ping__`, `:8787/health-check`.
 
 Secrets and Viya settings come from `.env` (template: `.env.example`).
 
@@ -54,7 +54,7 @@ The same `docker-compose.yml` runs unchanged under Docker Desktop (WSL2 backend)
 
 - The user's shell exports `CONNECT_API_KEY` for another server, and compose interpolates host env vars — don't introduce compose variables with generic names like that (hence `CONNECT_INIT_API_KEY`).
 - Connect bootstrap is irreversible on the real instance (creates users). Experiment in a throwaway `docker run` container instead. The JWT must be HS256 with the base64-decoded key and claims `iss=rsconnect-python`, `aud=rsconnect`, `scope=bootstrap`, sent as `Authorization: Connect-Bootstrap <jwt>` to `POST /__api__/v1/bootstrap`.
-- Connect rejects weak passwords (e.g. `posit`) when creating users via API.
+- Connect rejects weak passwords (e.g. `posit`) when creating users via API. `[Password] MinimumScore = 0` does not help (0 seems to act as unset), so the shared demo password is `positsas2026`.
 - `$` in compose `entrypoint`/`command` strings must be written `$$`.
 - If a bind-mount source file doesn't exist, Docker creates an empty directory at that path on the host — delete it before creating the file.
 - Find undocumented product settings by grepping the binaries' embedded docs, e.g. `strings /opt/rstudio-connect/bin/connect | grep 'doc:"'`; default configs are in the images under `/etc/rstudio-connect`, `/etc/rstudio-pm`, `/etc/rstudio`.

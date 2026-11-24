@@ -4,8 +4,8 @@ This repository runs a local Posit Team environment with Docker Compose. It conn
 
 | Service | URL | Sign in |
 |---------|-----|---------|
-| Workbench | <http://localhost:8787> | User `posit`, password `posit` |
-| Connect | <http://localhost:3939> | User `admin`, password from [Sign in to Connect](#sign-in-to-connect) |
+| Workbench | <http://localhost:8787> | User `posit`, password `positsas2026` |
+| Connect | <http://localhost:3939> | User `posit` (publisher), password `positsas2026`, or user `admin`, password from [Sign in to Connect](#sign-in-to-connect) |
 | Posit Package Manager | <http://localhost:4242> | No sign-in |
 
 The environment configures the following:
@@ -111,6 +111,8 @@ Edit `.env` and set the following values:
 
 **`POSITRON_SAS_CLIENT_ID`**: The SAS Logon client that the Positron SAS extension uses when it signs in to SAS Logon itself, for example `vscode-positron`.
 
+**`POSIT_USER_PASSWORD`**: Optional. The password of the user `posit` in Workbench and Connect. The default is `positsas2026`. Connect rejects weak passwords such as `posit`. Workbench applies a change when Docker re-creates the container. Connect uses the value only when it creates the user.
+
 **`VIYA_SCOPES`**: Optional. Comma-separated OAuth scopes. The default is `openid,sas-compute.user_impersonation`.
 
 If you set only some of the values for one product, the setup of that product stops with a message that names the missing values.
@@ -144,11 +146,13 @@ The environment is ready when `connect`, `package-manager`, and `workbench` repo
 
 ### Sign in to Workbench
 
-Open <http://localhost:8787> and sign in as `posit` with the password `posit`.
+Open <http://localhost:8787> and sign in as `posit` with the password `positsas2026`.
 
 ### Sign in to Connect
 
-Open <http://localhost:3939> and sign in as `admin`. If you did not set `CONNECT_ADMIN_PASSWORD` in `.env`, read the generated password:
+Open <http://localhost:3939> and sign in as `posit` with the password `positsas2026`. This user has the publisher role.
+
+To administer Connect, sign in as `admin`. If you did not set `CONNECT_ADMIN_PASSWORD` in `.env`, read the generated password:
 
 ```bash
 docker compose exec connect cat /var/lib/connect-bootstrap/admin-password

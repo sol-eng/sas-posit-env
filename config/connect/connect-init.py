@@ -14,7 +14,10 @@ they have to be created through the Connect Server API. This script:
      the first registered account becomes an admin, and the bootstrap user
      takes that slot. If CONNECT_ADMIN_PASSWORD is unset, a random password is
      generated and saved to /var/lib/connect-bootstrap/admin-password.
-  3. Creates the "SAS Viya (Viewer)" OAuth integration, or updates its config
+  3. Creates the publisher CONNECT_PUBLISHER_USER/CONNECT_PUBLISHER_PASSWORD
+     (compose: posit / POSIT_USER_PASSWORD, same login as Workbench), or changes an
+     existing viewer with that name to publisher. Skipped if the user is unset.
+  4. Creates the "SAS Viya (Viewer)" OAuth integration, or updates its config
      if it already exists, from:
        VIYA_HOSTNAME               e.g. viya.example.com
        CONNECT_VIYA_CLIENT_ID      SAS Logon client for Connect, e.g. posit-connect
@@ -200,6 +203,50 @@ def ensure_admin_user(api_key):
         log(f"Created admin user '{username}'")
 
 
+def ensure_publisher_user(api_key):
+    """Creates the publisher (posit, same login as Workbench), or
+    promotes an existing viewer to publisher. Never resets a password."""
+    username = os.environ.get("CONNECT_PUBLISHER_USER", "").strip()
+    if not username:
+        log("CONNECT_PUBLISHER_USER not set; skipping the publisher user")
+        return
+    status, payload = api("GET", f"/__api__/v1/users?prefix={username}", api_key)
+    if status != 200:
+        fail(f"Listing users failed: HTTP {status}: {payload}")
+    user = next((u for u in payload.get("results", []) if u.get("username") == username), None)
+
+    if user is None:
+        password = os.environ.get("CONNECT_PUBLISHER_PASSWORD", "")
+        if not password:
+            fail("CONNECT_PUBLISHER_PASSWORD is empty")
+        status, payload = api(
+            "POST",
+            "/__api__/v1/users",
+            api_key,
+            {
+                "username": username,
+                "password": password,
+                "email": f"{username}@localhost",
+                "first_name": username.capitalize(),
+                "last_name": "User",
+                "user_role": "publisher",
+                "user_must_set_password": False,
+            },
+        )
+        if status != 200:
+            fail(f"Creating publisher user '{username}' failed: HTTP {status}: {payload}")
+        log(f"Created publisher user '{username}'")
+    elif user.get("user_role") == "viewer":
+        status, payload = api(
+            "PATCH", f"/__api__/v1/users/{user['guid']}", api_key, {"user_role": "publisher"}
+        )
+        if status != 200:
+            fail(f"Making '{username}' a publisher failed: HTTP {status}: {payload}")
+        log(f"Changed user '{username}' from viewer to publisher")
+    else:
+        log(f"User '{username}' already exists ({user.get('user_role')})")
+
+
 def ensure_viya_integration(api_key):
     host = os.environ.get("VIYA_HOSTNAME", "").strip()
     host = host.removeprefix("https://").removeprefix("http://").split("/")[0]
@@ -263,6 +310,7 @@ def main():
     api_key, from_bootstrap = get_api_key()
     if from_bootstrap:
         ensure_admin_user(api_key)
+    ensure_publisher_user(api_key)
     ensure_viya_integration(api_key)
     log("Done")
 

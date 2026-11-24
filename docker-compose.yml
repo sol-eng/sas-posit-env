@@ -44,6 +44,10 @@ services:
       CONNECT_INIT_API_KEY: ${CONNECT_INIT_API_KEY:-}
       CONNECT_ADMIN_USER: ${CONNECT_ADMIN_USER:-admin}
       CONNECT_ADMIN_PASSWORD: ${CONNECT_ADMIN_PASSWORD:-}
+      # Publisher with the same login as the Workbench user (PWB_TESTUSER).
+      # Connect rejects weak passwords such as "posit", hence the longer default.
+      CONNECT_PUBLISHER_USER: posit
+      CONNECT_PUBLISHER_PASSWORD: ${POSIT_USER_PASSWORD:-positsas2026}
       VIYA_HOSTNAME: ${VIYA_HOSTNAME:-}
       VIYA_SCOPES: ${VIYA_SCOPES:-}
       CONNECT_VIYA_CLIENT_ID: ${CONNECT_VIYA_CLIENT_ID:-}
@@ -78,7 +82,7 @@ services:
     command: ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
     environment:
       PWB_TESTUSER: posit
-      PWB_TESTUSER_PASSWD: posit
+      PWB_TESTUSER_PASSWD: ${POSIT_USER_PASSWORD:-positsas2026}
       # Needed for restarts: the image's startup.sh only skips `useradd` for an
       # existing user when it can look it up by this UID.
       PWB_TESTUSER_UID: "10000"
