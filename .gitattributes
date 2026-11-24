@@ -1,0 +1,5 @@
+# Everything here is read by Linux containers (bash, python, product config
+# parsers), so keep LF line endings even when checked out on Windows: a CRLF
+# pwb-init.sh fails with "$'\r': command not found".
+* text=auto eol=lf
+*.lic -text

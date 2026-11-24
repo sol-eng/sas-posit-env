@@ -1,0 +1,62 @@
+; Posit Connect configuration
+; Reference: https://docs.posit.co/connect/admin/appendix/configuration/
+
+[Server]
+; Public URL as seen from your browser. Used for links in emails, the
+; publishing token-claim flow, and content URLs.
+Address = http://localhost:3939
+DataDir = /var/lib/rstudio-connect
+; SenderEmail = connect@example.com
+
+[HTTP]
+Listen = :3939
+
+[Bootstrap]
+; Lets the connect-init service create the first admin API key. The endpoint
+; refuses once Connect has any users, so leaving it enabled is harmless.
+; The key file is generated on first start (see docker-compose.yml).
+Enabled = true
+SecretKeyFile = /var/lib/connect-bootstrap/bootstrap.key
+
+[Authentication]
+; Local username/password accounts. The first account created becomes the admin.
+Provider = password
+
+; ----------------------------------------------------------------------------
+; Package repositories -> local Posit Package Manager
+; "package-manager" is the compose service name, resolvable on the compose
+; network. The Connect image is Ubuntu 24.04 (noble), so we request noble
+; binaries.
+; ----------------------------------------------------------------------------
+[RPackageRepository "CRAN"]
+URL = http://package-manager:4242/cran/__linux__/noble/latest
+
+[RPackageRepository "RSPM"]
+URL = http://package-manager:4242/cran/__linux__/noble/latest
+
+[PythonPackageRepository "pypi"]
+URL = http://package-manager:4242/pypi/latest/simple
+
+; ----------------------------------------------------------------------------
+; Runtimes shipped in the image (connect:2026.11.1-ubuntu-24.04-std).
+; These paths are tied to the image tag; update them when you bump it.
+; ----------------------------------------------------------------------------
+[R]
+Enabled = true
+Executable = /opt/R/4.6.2/bin/R
+ExecutableScanning = false
+
+[Python]
+Enabled = true
+Executable = /opt/python/3.14.10/bin/python
+
+[Quarto]
+Enabled = true
+Executable = /opt/quarto/bin/quarto
+
+[Logging]
+ServiceLog = STDOUT
+ServiceLogFormat = TEXT
+ServiceLogLevel = INFO
+AccessLog = STDOUT
+AccessLogFormat = COMMON

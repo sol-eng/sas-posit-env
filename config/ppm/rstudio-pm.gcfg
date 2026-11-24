@@ -1,0 +1,41 @@
+; Posit Package Manager configuration
+; Reference: https://docs.posit.co/rspm/admin/appendix/configuration.html
+
+[Server]
+; Public URL as seen from your browser.
+Address = http://localhost:4242
+DataDir = /var/lib/rstudio-pm
+
+; Runtimes shipped in the image (used for building Git-sourced packages and
+; PyPI metadata). Tied to package-manager:2026.11.0-ubuntu-24.04-std;
+; update these paths when you bump the image tag.
+RVersion = /opt/R/4.6.2
+PythonVersion = /opt/python/3.15.2/bin/python
+
+[HTTP]
+Listen = :4242
+
+; ----------------------------------------------------------------------------
+; Repositories auto-created on first start (only if they don't exist yet).
+; Each value is the repository name, which becomes the URL path:
+;   R:      http://<host>:4242/cran/latest
+;           http://<host>:4242/cran/__linux__/<distro>/latest   (binaries)
+;   Python: http://<host>:4242/pypi/latest/simple
+; ----------------------------------------------------------------------------
+[Repos]
+CRAN = cran
+PyPI = pypi
+;Bioconductor = bioconductor
+;OpenVSX = openvsx
+
+[Database]
+; SQLite is fine for a single node.
+;Provider = postgres
+
+[Logging]
+SystemLog = STDOUT
+SystemLogLevel = INFO
+SystemLogFormat = TEXT
+
+[Git]
+AllowUnsandboxedGitBuilds = true
